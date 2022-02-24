@@ -16,6 +16,27 @@ function RandomPath(){
   return y;
 }
 
+//On-off
+async function ToogleData(timeOn, address, log){
+  console.log(log);
+  let addressOn = '{ "' + address + '": 1' + '}';
+  let addressOff = '{ "' + address + '": 0' + '}';
+
+  addressOn = JSON.parse(addressOn);
+  addressOff = JSON.parse(addressOff);
+
+  await knex('plants')
+    .where('Nome_da_Planta', 'demo')
+    .update(addressOn);
+  
+  await Sleep(timeOn);
+
+  await knex('plants')
+    .where('Nome_da_Planta', 'demo')
+    .update(addressOff);    
+}
+async function SetData(){}
+
 async function Restart(){
   if (isRunning == false){
     isRunning = true;
@@ -26,95 +47,23 @@ async function Restart(){
 async function Run(){
     console.log("Starting a new run");
 
-    await Sleep(1000);
-    //sensor entrada
-    const emmit = await knex('plants')
-    .where('Nome_da_Planta', 'Demo')
-    .update({
-      Status_M101: 1
-    });
-    console.log("Emmited");
-    await Sleep(250);
-
-    const data = await knex('plants')
-    .where('Nome_da_Planta', 'Demo')
-    .update({
-      Status_M101: 0
-    });
-
+    await ToogleData(1000, "Status_M101", "Emmited");
     await Sleep(3000);
-    //sensor desviador
+
     let path = RandomPath();
-    const sensorTurn = await knex('plants')
-    .where('Nome_da_Planta', 'Demo')
-    .update({
-      Status_M104: path
-    });
-
-    await Sleep(250);
-
-    await knex('plants')
-    .where('Nome_da_Planta', 'Demo')
-    .update({
-      Status_M104: 0
-    });
-
-    //path 1 -> exit 1
     if (path === 0){
-        console.log("Path 1");
-        await Sleep(5000);
-        await knex('plants')
-        .where('Nome_da_Planta', 'Demo')
-        .update({
-          Status_M102: 1
-        });
-        console.log("Exited plant in path 1");
-        
-        await Sleep(250);
-    
-        await knex('plants')
-        .where('Nome_da_Planta', 'Demo')
-        .update({
-          Status_M102: 0
-        });  
+      console.log("Path 1");
+      await Sleep(5000);
+      await ToogleData(250, "Status_M102", "Sensor path 1");
+      console.log("Exited plant in path 1");
     }
-    //path 2 -> turn arm -> exit 2
     else{
-        console.log("Path 2");
-        //turn arm
-        await Sleep(500);
-        console.log("Turning arm");
-
-        await knex('plants')
-        .where('Nome_da_Planta', 'Demo')
-        .update({
-          Status_M122: 1
-        });
-    
-        await Sleep(2000);
-    
-        await knex('plants')
-        .where('Nome_da_Planta', 'Demo')
-        .update({
-          Status_M122: 0
-        });
-        //Exit 2
-        await Sleep(6000);
-        console.log("Exited plant in path 2");
-
-        await knex('plants')
-        .where('Nome_da_Planta', 'Demo')
-        .update({
-          Status_M103: 1
-        });
-    
-        await Sleep(1000);
-    
-        await knex('plants')
-        .where('Nome_da_Planta', 'Demo')
-        .update({
-          Status_M103: 0
-        });
+      await ToogleData(250, "Status_M104", "Pivot Arm Sensor");
+      await Sleep(500);
+      await ToogleData(2000, "Status_M122", "Path 2");
+      await Sleep(6000);
+      await ToogleData(300, "Status_M103", "Sensor path 2");
+      console.log("Exited plant in path 2");
     }
     isRunning = false;
 }
@@ -133,7 +82,7 @@ module.exports = {
   {    
     const allData = await knex('plants')
       .first('*')
-      .where('Nome_da_Planta', 'Demo');
+      .where('Nome_da_Planta', 'demo');
 
     return res.json(allData);
   },
@@ -141,7 +90,7 @@ module.exports = {
   async StartButton(req, res)
   {    
     const btData = await knex('plants')
-      .where('Nome_da_Planta', 'Demo')
+      .where('Nome_da_Planta', 'demo')
       .update({
         Status_M100: 1
       });
@@ -149,7 +98,7 @@ module.exports = {
       await Sleep(1000);
 
       const data = await knex('plants')
-      .where('Nome_da_Planta', 'Demo')
+      .where('Nome_da_Planta', 'demo')
       .update({
         Status_M100: 0
       });

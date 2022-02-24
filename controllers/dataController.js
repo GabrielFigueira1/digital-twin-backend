@@ -1,10 +1,10 @@
-const knex = require('../models/connection');
-knex.on('query', console.log)
+const knex = require('../models/connSuper');
+//knex.on('query', console.log)
 
 module.exports = {
   async readAll(req, res){
         
-    const allData = await knex('demo')
+    const allData = await knex('plants')
       .select('*');
 
     return res.json(allData);

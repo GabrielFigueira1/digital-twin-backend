@@ -5,6 +5,7 @@ const routes = express.Router();
 
 const dataController = require('./controllers/dataController');
 const fakeSystem = require('./controllers/fakeSystem');
+const learn = require('./controllers/plantLearner')
 
 routes.get('/', (req, res) => {
     res.send("Server is running.");
@@ -23,8 +24,8 @@ routes.get('/ReadStatus', fakeSystem.ReadStatus);
 
 routes.get('/StartButton', fakeSystem.StartButton);
 
-routes.get('/StartPlant', fakeSystem.StartPlant);
+routes.get('/Run', fakeSystem.StartPlant);
 
-
+routes.get('/Learn', learn.Learn);
 
 module.exports = routes;
