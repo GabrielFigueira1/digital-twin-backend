@@ -28,4 +28,8 @@ routes.get('/Run', fakeSystem.StartPlant);
 
 routes.get('/Learn', learn.Learn);
 
+routes.get('/CheckAnomalies', learn.Anomalies);
+
+routes.get('/ToggleError', fakeSystem.ToggleErrorSimulation);
+
 module.exports = routes;
