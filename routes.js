@@ -30,6 +30,8 @@ routes.get('/Learn', learn.Learn);
 
 routes.get('/CheckAnomalies', learn.Anomalies);
 
+routes.get('/ReadAnomalies', learn.ReadAnomalies);
+
 routes.get('/ToggleError', fakeSystem.ToggleErrorSimulation);
 
 module.exports = routes;

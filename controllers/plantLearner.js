@@ -11,6 +11,9 @@ var databaseObj;
 var lastChangeTime = -1;
 var _lastChangeTime = -1;
 
+var anomalies = []; //Stack with all anomalies detected
+var anomaliesCount = 0;
+
 const expectedBehavioursAmount = 2; //TODO: Change it to URL parameter
 
 var allBehaviours = []; //The data structure that holds all expected behaviours of the plant\
@@ -297,25 +300,21 @@ function _GetTimeSinceLastChange(){
 }
 
 var currentBehaviour = [];
-var aux =  0;
 var discarted = [];
 //Fatal divergence -> different database
-//Warnig divergence -> timestamp above threshold
+//Warning divergence -> timestamp above threshold
 function CheckForAnomalies(){
     let temp = new Map([...sInputs, ...sOutputs]);
     temp.set("timestamp", _GetTimeSinceLastChange());
     currentBehaviour.push(temp);
     let j = currentBehaviour.length - 1;
 
-    let hasAnomalies = false;
     loop1: for (i = 0; i < allBehaviours.length; i++){
         if (discarted.includes(i)){
             break;
         }
-        //for (j = 0; j < currentBehaviour[i].length; j++){
+        let hasPostedAnomalie = false;
             for (let [key, value] of allBehaviours[i][j]){
-                //Esta testando todos os "j"
-                //So tem que testar 1
                 if (allBehaviours[i][j].get(key) != temp.get(key) && key != "timestamp")
                 {
                     //console.log("discarted temp " + discarted);
@@ -330,43 +329,48 @@ function CheckForAnomalies(){
                         console.log("Expected: " + key + ": " + allBehaviours[i][j].get(key));
                         console.log("Actual: " + key + ": " + temp.get(key));
                         console.log("discarted behaviours: " + discarted);
+                        sendAnomalie(key + " is " + temp.get(key) + ". Expected: " + allBehaviours[i][j].get(key));
                         break loop1;
                     }
                     continue loop1;
                 }
                 else if (key === "timestamp"){
-                    //||  temp.get(key) < (allBehaviours[i][j].get(key) - ANOMALIE_THESHOLD)
-                    if (temp.get(key) > (allBehaviours[i][j].get(key) + ANOMALIE_THESHOLD)
-                    ){
+                    if ((temp.get(key) > (allBehaviours[i][j].get(key) + ANOMALIE_THESHOLD)
+                    ||  temp.get(key) < (allBehaviours[i][j].get(key) - ANOMALIE_THESHOLD)
+                    ) && !hasPostedAnomalie){
                         console.log("Detected a timestamp anomalie");
                         console.log("Timestamp: " + temp.get(key) + " Expected: " + allBehaviours[i][j].get(key));
+                        //sendAnomalie(allBehaviours[i][j], temp);
+                        sendAnomalie(key + " is " + temp.get(key) + ". Expected: " + allBehaviours[i][j].get(key));
+                        hasPostedAnomalie = true;
                     }
                 }
             }
-        //}
     }
-    /*
-    for (let savedBehaviour of allBehaviours){
-        for (i = 0; i < currentBehaviour.length - 1; i++){
-            for (let [key, value] of savedBehaviour[i]){
-                if (key === "timestamp"){
-                    break;
-                }
-                //console.log(savedBehaviour[i].get(key), behaviour[i].get(key));
-                if (savedBehaviour[i].get(key) != temp.get(key))
-                {
-                    hasAnomalies = true;
-                    console.log("Detected an anomalie");
-                    console.log(temp.get(key), savedBehaviour[i].get(key));
-                }
-            }
-        }
-        
-    }*/
-
-    //currentBehaviour.push(mergedInOut);
 }
 
+//Push anomalies
+//expected and temp should be a Map type
+/*function sendAnomalie(expected, actual){
+    expected = Object.fromEntries(expected);
+    actual = Object.fromEntries(actual);
+    anomalies.push(expected, actual);
+    console.log(anomalies);
+    console.log(anomalies.length);
+    anomaliesCount++;
+    console.log(anomaliesCount);
+}*/
+function sendAnomalie(message){
+    anomaliesCount++;
+    let time = new Date();
+    message = "[" + time + "] " + message;
+    let anomalieExtra = {anomalieId: anomaliesCount}
+    message = Object.assign(anomalieExtra, {message});
+    anomalies.push(message);
+    console.log(anomalies);
+
+    console.log(anomaliesCount);
+}
 async function StartMonitoring() {
     previous_sInputs = new Map, previous_sOutputs = new Map;
     let canCheck = false;
@@ -407,5 +411,9 @@ module.exports = {
     async Anomalies(req, res) {
         StartMonitoring();
         res.send("Database is beeing monitored");
+    },
+    async ReadAnomalies(req, res) {
+        //Write in the database?
+        return res.json(anomalies.shift());
     }
 }

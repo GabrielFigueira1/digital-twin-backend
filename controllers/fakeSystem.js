@@ -50,6 +50,8 @@ async function Run(){
 
     await ToggleData(250, "Status_M120", "Emitter");
     await Sleep(250);
+    //Error simulation
+    if(errorSim) await Sleep(1500);
     await ToggleData(500, "Status_M101", "Sensor Start");
     await Sleep(3000);
 
@@ -64,7 +66,7 @@ async function Run(){
       await ToggleData(250, "Status_M104", "Pivot Arm Sensor");
       await Sleep(500);
       //Error simulation
-      if(errorSim) await Sleep(1500);
+      //if(errorSim) await Sleep(1500);
       await ToggleData(2000, "Status_M122", "Path 2");
       await Sleep(6000);
       await ToggleData(300, "Status_M103", "Sensor path 2");
