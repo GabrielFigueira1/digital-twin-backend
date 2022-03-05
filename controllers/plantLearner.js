@@ -31,10 +31,10 @@ var expectedBehaviours = [];
 const res = require('express/lib/response');
 const knex = require('../models/connSuper');
 
-async function UpdateDatabase(){
+async function UpdateDatabase() {
     const database = await knex('plants')
-    .first('*')
-    .where('Nome_da_Planta', 'demo');
+        .first('*')
+        .where('Nome_da_Planta', 'demo');
 
     databaseObj = JSON.stringify(database);
     databaseObj = JSON.parse(databaseObj);
@@ -47,32 +47,30 @@ async function UpdateDatabase(){
     emitterKeys = [];
     let isEmitterKey = false;
 
-    for(let key in databaseObj){
-        if(databaseObj[key] != null){
+    for (let key in databaseObj) {
+        if (databaseObj[key] != null) {
             let item = {};
-            if(key.includes(INPUT_SUBSTRING) && !databaseObj[key].includes(BT_NAME_SUBSTRING)){
-                item = {[key]: databaseObj[key]};
+            if (key.includes(INPUT_SUBSTRING) && !databaseObj[key].includes(BT_NAME_SUBSTRING)) {
+                item = { [key]: databaseObj[key] };
                 inputs.push(item);
             }
-            else if(key.includes(OUTPUT_SUBSTRING)){
-                item = {[key]: databaseObj[key]};
+            else if (key.includes(OUTPUT_SUBSTRING)) {
+                item = { [key]: databaseObj[key] };
                 outputs.push(item);
 
-                if(databaseObj[key].includes(EMITTER_NAME_SUBSTRING)){
+                if (databaseObj[key].includes(EMITTER_NAME_SUBSTRING)) {
                     isEmitterKey = true;
                 }
             }
-            else if(key.includes(S_INPUT_SUBSTRING[0]) || key.includes(S_INPUT_SUBSTRING[1])){
-                item = {[key]: databaseObj[key]};
-                //sInputs.push(item);
+            else if (key.includes(S_INPUT_SUBSTRING[0]) || key.includes(S_INPUT_SUBSTRING[1])) {
+                item = { [key]: databaseObj[key] };
                 sInputs.set(key, databaseObj[key]);
             }
-            else if(key.includes(S_OUTPUT_SUBSTRING[0] || key.includes(S_OUTPUT_SUBSTRING[1]))){
-                item = {[key]: databaseObj[key]};
-                //sOutputs.push(item);
+            else if (key.includes(S_OUTPUT_SUBSTRING[0] || key.includes(S_OUTPUT_SUBSTRING[1]))) {
+                item = { [key]: databaseObj[key] };
                 sOutputs.set(key, databaseObj[key]);
-                
-                if (isEmitterKey){
+
+                if (isEmitterKey) {
                     emitterKeys.push(key);
                     isEmitterKey = false;
                 }
@@ -81,16 +79,15 @@ async function UpdateDatabase(){
     }
 }
 
-function DatabaseHasChanges(){
+function DatabaseHasChanges() {
     let hasChanged = false;
 
-    for (let [key, value] of sInputs){
-        //console.log(value, previous_sInputs.get(key))
+    for (let [key, value] of sInputs) {
         if (value != previous_sInputs.get(key))
             hasChanged = true;
     }
 
-    for (let [key, value] of sOutputs){
+    for (let [key, value] of sOutputs) {
         if (value != previous_sOutputs.get(key))
             hasChanged = true;
     }
@@ -98,14 +95,12 @@ function DatabaseHasChanges(){
     previous_sInputs = new Map(sInputs);
     previous_sOutputs = new Map(sOutputs);
 
-    //if(hasChanged === true)
-        //console.log("Has database changed: " + hasChanged);
     return hasChanged;
 }
 
 //Returns the time since the last change. Result in miliseconds
-function GetTimeSinceLastChange(){
-    if (lastChangeTime === 0){
+function GetTimeSinceLastChange() {
+    if (lastChangeTime === 0) {
         lastChangeTime = Date.now();
         return 0;
     }
@@ -116,21 +111,19 @@ function GetTimeSinceLastChange(){
     return lastChange;
 }
 
-function SaveBehaviour(){
+function SaveBehaviour() {
     let mergedInOut = new Map([...sInputs, ...sOutputs]);
     mergedInOut.set("timestamp", GetTimeSinceLastChange());
 
     behaviour.push(mergedInOut);
-
-   // console.log(behaviour);
 }
 
 //Check if a new product was emitted
 var canEmitt = true;
-function HasEmitted(){
+function HasEmitted() {
     let onEmitterCount = 0;
-    for (let i in emitterKeys){
-        if (sOutputs.get(emitterKeys.at(i)) === 1){
+    for (let i in emitterKeys) {
+        if (sOutputs.get(emitterKeys.at(i)) === 1) {
             onEmitterCount++;
             if (canEmitt === true) {
                 canEmitt = false;
@@ -141,145 +134,79 @@ function HasEmitted(){
     }
     if (onEmitterCount === 0)
         canEmitt = true;
-    
+
     return false;
 }
 
-//Saves the current behaviour in the data structure and reset behaviour array
-//Checks if that behaviour is already in the memory
-function PushBehaviour(){
+
+function PushBehaviour() {
     if (behaviour.length === 0) return;
-    //for (it in behaviour) LogMap(behaviour[it]);
-
-    
-    
-
-    /*for (let savedBehaviour of allBehaviours){
-        for (let savedBehaviourItem of savedBehaviour){
-            console.log(savedBehaviourItem.get('Status_M100'))
-            
-        }
-    }*/
-    //savedBehaviours -> array de mapas
-    //allbehaviouars -> matriz de mapas
-    //savedBehaviours -> 6 ou 10 passos
-    //behaviour -> 6 ou 10 passos
     let isDifferent = false;
-    for (let savedBehaviour of allBehaviours){
-        if (behaviour.length !== savedBehaviour.length){
+    for (let savedBehaviour of allBehaviours) {
+        if (behaviour.length !== savedBehaviour.length) {
             console.log("Different length");
             isDifferent = true;
-            //allBehaviours.push(behaviour);
             continue;
         }
-
-        for (i = 0; i < savedBehaviour.length - 1; i++){
-            for (let [key, value] of savedBehaviour[i]){
-                if (key === "timestamp"){
+        for (i = 0; i < savedBehaviour.length - 1; i++) {
+            for (let [key, value] of savedBehaviour[i]) {
+                if (key === "timestamp") {
                     break;
                 }
-                //console.log(savedBehaviour[i].get(key), behaviour[i].get(key));
-                if (savedBehaviour[i].get(key) != behaviour[i].get(key))
-                {
+                if (savedBehaviour[i].get(key) != behaviour[i].get(key)) {
                     isDifferent = true;
                     console.log("Detected a new behaviour")
                 }
-
             }
-            //console.log(savedBehaviour[i].get("Status_M101")+ ", i = " + i)
         }
-        
-
-        //console.log(savedBehaviour[0]);
-        //savedBehaviour === behaviour
         console.log(" ");
-
-        //console.log(behaviour);
     }
-    if (isDifferent){
+    if (isDifferent) {
         allBehaviours.push(behaviour);
         console.log(allBehaviours);
         isDifferent = false;
     }
-    if (allBehaviours.length === 0){
+    if (allBehaviours.length === 0) {
         allBehaviours.push(behaviour);
         console.log(allBehaviours);
     }
     behaviour = [];
     lastChangeTime = 0;
-    //console.log("All: ");
-    //LogMap(allBehaviours);
-    //console.log(allBehaviours);
 }
 
-async function StartLearning(){
-    //Algorithm:
-        //Define an entry point: emitter, btStart? -> emitter
-        var isLearning = true;
-        let canSave = false;
-        
-        //if (sOutputs[emitterKeys])
-        while (isLearning)
-        {
-            //while (isLearning){
-            //Listener to record database outputs changes events
-            await UpdateDatabase();
+async function StartLearning() {
+    var isLearning = true;
+    let canSave = false;
 
-            //Iteration ends when a new product is emitted
-            if (HasEmitted()) {
-                if (canSave)
-                    PushBehaviour();
-                else
-                    canSave = true;
-            }
+    while (isLearning) {
+        await UpdateDatabase();
 
-            //If has changes, save the database context in a element of a data structure
-            if (canSave) {
-                if (DatabaseHasChanges()) {
-                    if (lastChangeTime === -1) {
-                        lastChangeTime = 0;
-                    }
-                    SaveBehaviour();
-                    //Save every change with a timestamp
-                }}
-
-            //If a element within the data structure is exactly identical to another, discard that
-
-            //However, if is different, add the element
-            //Loop ends when an abirtrary defined value is reached. Can be time or num of iterations
-            if (allBehaviours.length === expectedBehavioursAmount)
-                isLearning = false;
-        //}
+        //Iteration ends when a new product is emitted
+        if (HasEmitted()) {
+            if (canSave)
+                PushBehaviour();
+            else
+                canSave = true;
         }
-        
-        console.log("Plant learned");
-        console.log(allBehaviours.length + " differents behaviours mapped");
-        //console.log(allBehaviours);
 
-        //With the plant running
-        //Should be another function? -> yes
-        //Get the database state
-        //Consider the database state as an index of the data structure
-        //All database's states should match every element of the data structure array
-            //Gives an error if a state not match
-        //Every state should not take much longer than the time recorded in the data structure's timestamp 
-            //Gives a warning if the state takes unexpected time - arbitrary threshold?
-}
+        if (canSave) {
+            if (DatabaseHasChanges()) {
+                if (lastChangeTime === -1) {
+                    lastChangeTime = 0;
+                }
+                SaveBehaviour();
+            }
+        }
+        if (allBehaviours.length === expectedBehavioursAmount)
+            isLearning = false;
 
-function LogMap(map){
-    let cp = Object.fromEntries(map);
-    console.log(cp);
-}
-
-function MapArrayToObject(map){
-    let obj = [];
-    for (it in behaviour){
-        obj.push(Object.fromEntries(map[it]))
     }
-    return obj;
+
+    console.log("Plant learned");
+    console.log(allBehaviours.length + " differents behaviours mapped");
 }
 
-function ResetComparation(){
+function ResetComparation() {
     discarted = [];
     _lastChangeTime = 0;
     currentBehaviour = [];
@@ -287,8 +214,8 @@ function ResetComparation(){
 }
 
 
-function _GetTimeSinceLastChange(){
-    if (_lastChangeTime === 0){
+function _GetTimeSinceLastChange() {
+    if (_lastChangeTime === 0) {
         _lastChangeTime = Date.now();
         return 0;
     }
@@ -303,69 +230,50 @@ var currentBehaviour = [];
 var discarted = [];
 //Fatal divergence -> different database
 //Warning divergence -> timestamp above threshold
-function CheckForAnomalies(){
+function CheckForAnomalies() {
     let temp = new Map([...sInputs, ...sOutputs]);
     temp.set("timestamp", _GetTimeSinceLastChange());
     currentBehaviour.push(temp);
     let j = currentBehaviour.length - 1;
 
-    loop1: for (i = 0; i < allBehaviours.length; i++){
-        if (discarted.includes(i)){
+    loop1: for (i = 0; i < allBehaviours.length; i++) {
+        if (discarted.includes(i)) {
             break;
         }
         let hasPostedAnomalie = false;
-            for (let [key, value] of allBehaviours[i][j]){
-                if (allBehaviours[i][j].get(key) != temp.get(key) && key != "timestamp")
-                {
-                    //console.log("discarted temp " + discarted);
-                    //console.log("current status ")
-                    //console.log(temp)
-                    //console.log("expected status ")
-                   // console.log(allBehaviours[i][j])
-
-                    discarted.push(i);
-                    if (discarted.length >= allBehaviours.length){
-                        console.log("Detected a fatal divergence");
-                        console.log("Expected: " + key + ": " + allBehaviours[i][j].get(key));
-                        console.log("Actual: " + key + ": " + temp.get(key));
-                        console.log("discarted behaviours: " + discarted);
-                        sendAnomalie(key + " is " + temp.get(key) + ". Expected: " + allBehaviours[i][j].get(key));
-                        break loop1;
-                    }
-                    continue loop1;
+        for (let [key, value] of allBehaviours[i][j]) {
+            if (allBehaviours[i][j].get(key) != temp.get(key) && key != "timestamp") {
+                discarted.push(i);
+                if (discarted.length >= allBehaviours.length) {
+                    console.log("Detected a fatal divergence");
+                    console.log("Expected: " + key + ": " + allBehaviours[i][j].get(key));
+                    console.log("Actual: " + key + ": " + temp.get(key));
+                    console.log("discarted behaviours: " + discarted);
+                    sendAnomalie(key + " is " + temp.get(key) + ". Expected: " + allBehaviours[i][j].get(key));
+                    break loop1;
                 }
-                else if (key === "timestamp"){
-                    if ((temp.get(key) > (allBehaviours[i][j].get(key) + ANOMALIE_THESHOLD)
-                    ||  temp.get(key) < (allBehaviours[i][j].get(key) - ANOMALIE_THESHOLD)
-                    ) && !hasPostedAnomalie){
-                        console.log("Detected a timestamp anomalie");
-                        console.log("Timestamp: " + temp.get(key) + " Expected: " + allBehaviours[i][j].get(key));
-                        //sendAnomalie(allBehaviours[i][j], temp);
-                        sendAnomalie(key + " is " + temp.get(key) + ". Expected: " + allBehaviours[i][j].get(key));
-                        hasPostedAnomalie = true;
-                    }
+                continue loop1;
+            }
+            else if (key === "timestamp") {
+                if ((temp.get(key) > (allBehaviours[i][j].get(key) + ANOMALIE_THESHOLD)
+                    || temp.get(key) < (allBehaviours[i][j].get(key) - ANOMALIE_THESHOLD)
+                ) && !hasPostedAnomalie) {
+                    console.log("Detected a timestamp anomalie");
+                    console.log("Timestamp: " + temp.get(key) + " Expected: " + allBehaviours[i][j].get(key));
+                    sendAnomalie(key + " is " + temp.get(key) + ". Expected: " + allBehaviours[i][j].get(key));
+                    hasPostedAnomalie = true;
                 }
             }
+        }
     }
 }
 
-//Push anomalies
-//expected and temp should be a Map type
-/*function sendAnomalie(expected, actual){
-    expected = Object.fromEntries(expected);
-    actual = Object.fromEntries(actual);
-    anomalies.push(expected, actual);
-    console.log(anomalies);
-    console.log(anomalies.length);
-    anomaliesCount++;
-    console.log(anomaliesCount);
-}*/
-function sendAnomalie(message){
+function sendAnomalie(message) {
     anomaliesCount++;
     let time = new Date();
     message = "[" + time + "] " + message;
-    let anomalieExtra = {anomalieId: anomaliesCount}
-    message = Object.assign(anomalieExtra, {message});
+    let anomalieExtra = { anomalieId: anomaliesCount }
+    message = Object.assign(anomalieExtra, { message });
     anomalies.push(message);
     console.log(anomalies);
 
@@ -393,13 +301,6 @@ async function StartMonitoring() {
                 CheckForAnomalies();
             }
         }
-        /*
-            atualizar database --
-            esperar estado de inicio com emitter
-            esperar atualizacao do database
-                Salvar estado
-                comparar com estados aprendidos
-        */
     }
 }
 
@@ -413,7 +314,7 @@ module.exports = {
         res.send("Database is beeing monitored");
     },
     async ReadAnomalies(req, res) {
-        //Write in the database?
+        //Should write in the database?
         return res.json(anomalies.shift());
     }
 }
