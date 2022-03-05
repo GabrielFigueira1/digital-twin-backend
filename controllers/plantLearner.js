@@ -183,8 +183,10 @@ async function StartLearning() {
 
         //Iteration ends when a new product is emitted
         if (HasEmitted()) {
-            if (canSave)
+            if (canSave){
+                SaveBehaviour();
                 PushBehaviour();
+            }
             else
                 canSave = true;
         }
@@ -249,7 +251,7 @@ function CheckForAnomalies() {
                     console.log("Expected: " + key + ": " + allBehaviours[i][j].get(key));
                     console.log("Actual: " + key + ": " + temp.get(key));
                     console.log("discarted behaviours: " + discarted);
-                    sendAnomalie(key + " is " + temp.get(key) + ". Expected: " + allBehaviours[i][j].get(key));
+                    sendAnomalie("O valor de " + key + " é " + temp.get(key) + ". Esperado: " + allBehaviours[i][j].get(key));
                     break loop1;
                 }
                 continue loop1;
@@ -259,8 +261,8 @@ function CheckForAnomalies() {
                     || temp.get(key) < (allBehaviours[i][j].get(key) - ANOMALIE_THESHOLD)
                 ) && !hasPostedAnomalie) {
                     console.log("Detected a timestamp anomalie");
-                    console.log("Timestamp: " + temp.get(key) + " Expected: " + allBehaviours[i][j].get(key));
-                    sendAnomalie(key + " is " + temp.get(key) + ". Expected: " + allBehaviours[i][j].get(key));
+                    console.log("Timestamp: " + temp.get(key) + " Esperado: " + allBehaviours[i][j].get(key));
+                    sendAnomalie("Há um atraso em uma etapa da planta. " + key + " é " + temp.get(key) + ". Esperado: " + allBehaviours[i][j].get(key));
                     hasPostedAnomalie = true;
                 }
             }
@@ -279,6 +281,7 @@ function sendAnomalie(message) {
 
     console.log(anomaliesCount);
 }
+
 async function StartMonitoring() {
     previous_sInputs = new Map, previous_sOutputs = new Map;
     let canCheck = false;
