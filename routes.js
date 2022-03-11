@@ -19,12 +19,13 @@ routes.get('/deleteLast', dataController.deleteLast);
 
 routes.post('/insertData', dataController.insertData);
 
-
 routes.get('/ReadStatus', fakeSystem.ReadStatus);
 
 routes.get('/StartButton', fakeSystem.StartButton);
 
 routes.get('/Run', fakeSystem.StartPlant);
+
+routes.get('/Stop', fakeSystem.Stop);
 
 routes.get('/Learn', learn.Learn);
 

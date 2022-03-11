@@ -9,7 +9,7 @@ module.exports = {
 
     return res.json(allData);
     },
-
+  //deprecated
   async insertData(req, res) {
     try {
       const { name, value } = req.body;
@@ -24,7 +24,7 @@ module.exports = {
       console.log(error);
     }
   },
-
+  //deprecated
   async deleteLast(req, res){
     const lastRow = await knex('demo')
       .first('*')
@@ -40,7 +40,7 @@ module.exports = {
 
     return res.send("Last element deleted. id: " + lastId + " Name: " + lastRowObj.name + " Value: lastRowObj.value" );
   },
-
+  //deprecated
   async readLast(req, res){
     const row = await knex('demo')
       .first('*')

@@ -5,6 +5,8 @@ const S_OUTPUT_SUBSTRING = ["Status_M12", "Status_M13"];
 const BT_NAME_SUBSTRING = "Start";
 const EMITTER_NAME_SUBSTRING = "Emitt";
 const ANOMALIE_THESHOLD = 150;
+const PLANT_NAME = 'Test';
+//const PLANT_NAME = 'demo';
 
 var databaseObj;
 
@@ -34,7 +36,7 @@ const knex = require('../models/connSuper');
 async function UpdateDatabase() {
     const database = await knex('plants')
         .first('*')
-        .where('Nome_da_Planta', 'demo');
+        .where('Nome_da_Planta', PLANT_NAME);
 
     databaseObj = JSON.stringify(database);
     databaseObj = JSON.parse(databaseObj);
@@ -310,11 +312,11 @@ async function StartMonitoring() {
 module.exports = {
     async Learn(req, res) {
         StartLearning();
-        res.send("Plant behaviour is beeing learned");
+        res.send("Aprendendo planta.");
     },
     async Anomalies(req, res) {
         StartMonitoring();
-        res.send("Database is beeing monitored");
+        res.send("O comportamento está sendo monitorado.");
     },
     async ReadAnomalies(req, res) {
         //Should write in the database?

@@ -1,12 +1,12 @@
 module.exports = {
 
     development: {
-        client: 'mysql2',
+        client: 'mysql',
         connection: {
-          host: '127.0.0.1',
-          database: 'teste',
-          user: 'root',
-          password: 'root'
+          host: 'virtualsetup.mysql.dbaas.com.br',
+          database: 'virtualsetup',
+          user: 'virtualsetup',
+          password: 'projetosuper'
         },
         pool: {
         min: 2,
@@ -19,12 +19,12 @@ module.exports = {
       },
 
       super: {
-        client: 'mysql2',
+        client: 'mysql',
         connection: {
-          host: '127.0.0.1',
-          database: 'super',
-          user: 'root',
-          password: 'root'
+          host: 'virtualsetup.mysql.dbaas.com.br',
+          database: 'virtualsetup',
+          user: 'virtualsetup',
+          password: 'projetosuper'
         },
         pool: {
         min: 2,
@@ -69,3 +69,40 @@ module.exports = {
     }
   
   };
+
+/*
+development: {
+        client: 'mysql2',
+        connection: {
+          host: '127.0.0.1',
+          database: 'teste',
+          user: 'root',
+          password: 'root'
+        },
+        pool: {
+        min: 2,
+        max: 10
+        },
+        migrations: {
+          directory: './models/migrations'
+        },
+        useNullAsDefault: true,
+      },
+  super: {
+        client: 'mysql2',
+        connection: {
+          host: '127.0.0.1',
+          database: 'super',
+          user: 'root',
+          password: 'root'
+        },
+        pool: {
+        min: 2,
+        max: 10
+        },
+        migrations: {
+          directory: './models/migrations'
+        },
+        useNullAsDefault: true,
+      },
+*/
