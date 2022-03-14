@@ -1,4 +1,4 @@
-const PLANT_NAME = 'Teste';
+const PLANT_NAME = 'Projeto_super_2';
 //const PLANT_NAME = 'demo';
 var runHandler;
 

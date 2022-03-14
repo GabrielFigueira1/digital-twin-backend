@@ -5,7 +5,7 @@ const S_OUTPUT_SUBSTRING = ["Status_M12", "Status_M13"];
 const BT_NAME_SUBSTRING = "Start";
 const EMITTER_NAME_SUBSTRING = "Emitt";
 const ANOMALIE_THESHOLD = 150;
-const PLANT_NAME = 'Test';
+const PLANT_NAME = 'Projeto_super_2';
 //const PLANT_NAME = 'demo';
 
 var databaseObj;
@@ -140,7 +140,6 @@ function HasEmitted() {
     return false;
 }
 
-
 function PushBehaviour() {
     if (behaviour.length === 0) return;
     let isDifferent = false;
@@ -208,6 +207,7 @@ async function StartLearning() {
 
     console.log("Plant learned");
     console.log(allBehaviours.length + " differents behaviours mapped");
+    StartMonitoring();
 }
 
 function ResetComparation() {

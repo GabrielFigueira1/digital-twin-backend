@@ -5,7 +5,8 @@ const routes = express.Router();
 
 const dataController = require('./controllers/dataController');
 const fakeSystem = require('./controllers/fakeSystem');
-const learn = require('./controllers/plantLearner')
+const learn = require('./controllers/plantLearner');
+const createTable = require('./models/createTable');
 
 routes.get('/', (req, res) => {
     res.send("Server is running.");
@@ -34,5 +35,8 @@ routes.get('/CheckAnomalies', learn.Anomalies);
 routes.get('/ReadAnomalies', learn.ReadAnomalies);
 
 routes.get('/ToggleError', fakeSystem.ToggleErrorSimulation);
+
+//Only for tests
+routes.get('/writeDatabase', createTable.Create);
 
 module.exports = routes;
