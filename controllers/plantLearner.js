@@ -5,8 +5,8 @@ const S_OUTPUT_SUBSTRING = ["Status_M12", "Status_M13"];
 const BT_NAME_SUBSTRING = "Start";
 const EMITTER_NAME_SUBSTRING = "Emitt";
 const ANOMALIE_THESHOLD = 150;
-const PLANT_NAME = 'Projeto_super_2';
-//const PLANT_NAME = 'demo';
+const PLANT_NAME = 'demo';
+//const PLANT_NAME = 'demo'Projeto_super_2;
 
 var databaseObj;
 

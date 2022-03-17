@@ -1,12 +1,12 @@
 module.exports = {
 
     development: {
-        client: 'mysql',
+        client: 'mysql2',
         connection: {
-          host: 'virtualsetup.mysql.dbaas.com.br',
-          database: 'virtualsetup',
-          user: 'virtualsetup',
-          password: 'projetosuper'
+          host: '127.0.0.1',
+          database: 'super',
+          user: 'root',
+          password: 'root'
         },
         pool: {
         min: 2,

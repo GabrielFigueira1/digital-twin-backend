@@ -1,5 +1,5 @@
-const PLANT_NAME = 'Projeto_super_2';
-//const PLANT_NAME = 'demo';
+const PLANT_NAME = 'demo';
+//const PLANT_NAME = 'demo'Projeto_super_2;
 var runHandler;
 
 const knex = require('../models/connSuper');
@@ -12,13 +12,23 @@ async function Sleep(timeout) {
 
 var isRunning = false, hasPlantStarted = false, stop = false;
 
+
+var lastPath = 1;
 function RandomPath() {
+  
+  if (lastPath === 1)
+    lastPath = 0;
+  else
+    lastPath = 1;
+  return lastPath;
+  /*
   var y = Math.random();
   if (y < 0.5)
     y = 0;
   else
     y = 1;
   return y;
+  */
 }
 
 //On-off
@@ -120,8 +130,8 @@ async function Restart() {
 async function Run() {
   console.log("Starting a new run");
   if(CheckStopSignal()) return;
-  await ToggleData(250, "Status_M120", "Emitter");
-  await Sleep(250);
+  await ToggleData(500, "Status_M120", "Emitter");
+  //await Sleep(50);
   //Error simulation
   if (errorSim) {
     await Sleep(1500);
@@ -130,29 +140,29 @@ async function Run() {
   if(CheckStopSignal()) return;
 
   await ToggleData(500, "Status_M101", "Sensor Start");
-  await Sleep(3000);
+  await Sleep(500);
 
   let path = RandomPath();
-  if (path === 0) {
+  if (path == 0) {
     if(CheckStopSignal()) return;
     console.log("Path 1");
-    await Sleep(5000);
-    await ToggleData(250, "Status_M102", "Sensor path 1");
+    await Sleep(3600);
+    await ToggleData(700, "Status_M102", "Sensor path 1");
     console.log("Exited plant in path 1");
     if(CheckStopSignal()) return;
   }
   else {
     if(CheckStopSignal()) return;
-    await ToggleData(250, "Status_M104", "Pivot Arm Sensor");
-    await Sleep(500);
+    //await ToggleData(250, "Status_M104", "Pivot Arm Sensor");
+    //await Sleep(200);
     //Error simulation
     //if(errorSim) await Sleep(1500);
     if(CheckStopSignal()) return;
-    await ToggleData(2000, "Status_M122", "Path 2");
+    await ToggleData(3300, "Status_M122", "Path 2");
     if(CheckStopSignal()) return;
-    await Sleep(6000);
+    await Sleep(2200);
     if(CheckStopSignal()) return;
-    await ToggleData(300, "Status_M103", "Sensor path 2");
+    await ToggleData(700, "Status_M103", "Sensor path 2");
     console.log("Exited plant in path 2");
     if(CheckStopSignal()) return;
   }
