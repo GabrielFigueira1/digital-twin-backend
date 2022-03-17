@@ -207,6 +207,7 @@ async function StartLearning() {
 
     console.log("Plant learned");
     console.log(allBehaviours.length + " differents behaviours mapped");
+    sendMessage("Planta aprendida");
     StartMonitoring();
 }
 
@@ -253,7 +254,7 @@ function CheckForAnomalies() {
                     console.log("Expected: " + key + ": " + allBehaviours[i][j].get(key));
                     console.log("Actual: " + key + ": " + temp.get(key));
                     console.log("discarted behaviours: " + discarted);
-                    sendAnomalie("O valor de " + key + " é " + temp.get(key) + ". Esperado: " + allBehaviours[i][j].get(key));
+                    sendAnomalie("Anomalia: O valor de " + key + " é " + temp.get(key) + ". Esperado: " + allBehaviours[i][j].get(key));
                     break loop1;
                 }
                 continue loop1;
@@ -264,7 +265,7 @@ function CheckForAnomalies() {
                 ) && !hasPostedAnomalie) {
                     console.log("Detected a timestamp anomalie");
                     console.log("Timestamp: " + temp.get(key) + " Esperado: " + allBehaviours[i][j].get(key));
-                    sendAnomalie("Há um atraso em uma etapa da planta. " + key + " é " + temp.get(key) + ". Esperado: " + allBehaviours[i][j].get(key));
+                    sendAnomalie("Anomalia: Há um atraso no processo. " + "Etapa ocorreu em: " + temp.get(key) + ". Esperado: " + allBehaviours[i][j].get(key));
                     hasPostedAnomalie = true;
                 }
             }
@@ -275,13 +276,20 @@ function CheckForAnomalies() {
 function sendAnomalie(message) {
     anomaliesCount++;
     let time = new Date();
-    message = "[" + time + "] " + message;
+    //message = "[" + time + "] " + message;
     let anomalieExtra = { anomalieId: anomaliesCount }
     message = Object.assign(anomalieExtra, { message });
     anomalies.push(message);
     console.log(anomalies);
 
     console.log(anomaliesCount);
+}
+
+function sendMessage(message) {
+    let messageId =  0 
+    message = Object.assign( {messageId}, { message });
+    anomalies.push(message);
+    console.log(message);
 }
 
 async function StartMonitoring() {

@@ -139,7 +139,7 @@ async function Run() {
 
   if(CheckStopSignal()) return;
 
-  await ToggleData(500, "Status_M101", "Sensor Start");
+  await ToggleData(500, "Status_M102", "Sensor Start");
   await Sleep(500);
 
   let path = RandomPath();
@@ -147,7 +147,7 @@ async function Run() {
     if(CheckStopSignal()) return;
     console.log("Path 1");
     await Sleep(3600);
-    await ToggleData(700, "Status_M102", "Sensor path 1");
+    await ToggleData(700, "Status_M103", "Sensor path 1");
     console.log("Exited plant in path 1");
     if(CheckStopSignal()) return;
   }
@@ -162,7 +162,7 @@ async function Run() {
     if(CheckStopSignal()) return;
     await Sleep(2200);
     if(CheckStopSignal()) return;
-    await ToggleData(700, "Status_M103", "Sensor path 2");
+    await ToggleData(700, "Status_M104", "Sensor path 2");
     console.log("Exited plant in path 2");
     if(CheckStopSignal()) return;
   }
